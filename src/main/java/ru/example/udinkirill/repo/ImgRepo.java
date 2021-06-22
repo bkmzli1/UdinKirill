@@ -5,5 +5,6 @@ import ru.example.udinkirill.domain.Img;
 
 public interface ImgRepo extends JpaRepository<Img, String> {
 
+     Img findByName(String name);
 
 }

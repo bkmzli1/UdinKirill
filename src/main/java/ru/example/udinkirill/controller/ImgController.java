@@ -11,6 +11,9 @@ import ru.example.udinkirill.repo.ImgRepo;
 import ru.example.udinkirill.repo.UserRepo;
 import ru.example.udinkirill.services.impl.ImgService;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
@@ -57,14 +60,17 @@ public class ImgController {
                 }
                 String uuidFile = UUID.randomUUID().toString();
                 String resultFilename = uuidFile + "." + mf.getOriginalFilename();
-
+                Img imgDB = new Img();
+                try {
+                    imgDB.setBite(mf.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 try {
                     mf.transferTo(new File(uploadPDir + "/" + resultFilename));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                Img imgDB = new Img();
                 imgDB.setName(mf.getResource().getFilename());
                 imgDB.setImgType(ImgType.valueOf(type));
                 imgDB.setImg("static" + upFile + "/" + resultFilename);
@@ -99,5 +105,21 @@ public class ImgController {
         Set<String> imgIDs = new HashSet<>();
         images.forEach(img -> imgIDs.add(img.getId()));
         return imgIDs;
+    }
+    @RequestMapping(value = "/imageDisplay/{id}", method = RequestMethod.GET)
+    public void showImage(HttpServletResponse response, HttpServletRequest request, @PathVariable String id)
+            throws ServletException, IOException {
+
+
+        Img item = imgRepo.findById(id).get();
+        response.setContentType("image/jpeg, image/jpg, image/png, image/gif");
+        response.getOutputStream().write(item.getBite());
+
+
+        response.getOutputStream().close();
+    }
+    @GetMapping("/logo")
+    public String logo(){
+        return imgRepo.findByName("logo.jpg").getId();
     }
 }

@@ -22,7 +22,7 @@ public class Img {
     private String name;
     private String img;
     private ImgType imgType;
-
+    private byte[] bite;
 
 
 
@@ -58,5 +58,13 @@ public class Img {
 
     public void setImgType(ImgType imgType) {
         this.imgType = imgType;
+    }
+
+    public byte[] getBite() {
+        return bite;
+    }
+
+    public void setBite(byte[] bite) {
+        this.bite = bite;
     }
 }
